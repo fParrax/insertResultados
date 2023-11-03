@@ -70,7 +70,6 @@ public class Resultado {
              pst.setString(2,fecha02);
              rs = pst.executeQuery();
              while(rs.next()){
-                 System.out.println("x");
                  resuls.add(new Resultado(rs.getInt("idresultado"),rs.getString("fechaSorteo"),rs.getString("programa"),
                  rs.getString("sorteo"),rs.getString("animal"),rs.getString("estado")));
              }

@@ -2,6 +2,7 @@
 package Clases;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.util.regex.Pattern;
@@ -12,7 +13,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class Scraping_allPost {
+public class ScrapResultados {
 	
     public static final String url = "https://www.tuazar.com/loteria/animalitos/resultados/";
     public static final int maxPages = 20;
@@ -34,7 +35,7 @@ public class Scraping_allPost {
                 // Paseo cada una de las entradas
                 for (Element elem : entradas) {
                     String titulo = elem.getElementsByClass("col-xs-6 col-sm-3").text();
-                    JsonObject myResultado = new JsonObject();
+                   
                     if(titulo.contains("Lotto Activo") ){//|| titulo.contains("La Granjita")
                         String separador = Pattern.quote("Animalito Lotto Activo ");
                         String[] arreglo = titulo.split(separador);
@@ -56,9 +57,12 @@ public class Scraping_allPost {
                                 if(resultado.length > 1){
                                     String numAnimal = resultado[0];
                                     String horaSorteo = resultado[3];
-                                    System.out.println("Lotto Activo Salió el "+numAnimal+" para las "+horaSorteo);
+                                    //System.out.println("Lotto Activo Salió el "+numAnimal+" para las "+horaSorteo);
+                                     JsonObject myResultado = new JsonObject();
                                     myResultado.addProperty("animal", numAnimal);
+                                    myResultado.addProperty("programa", "LottoActivo");
                                     myResultado.addProperty("horaSorteo", horaSorteo);
+                                   // System.out.println(myResultado.toString());
                                     resultados.add(myResultado);
                                 }
                             }
@@ -84,8 +88,11 @@ public class Scraping_allPost {
                                 if(resultado.length > 1){
                                     String numAnimal = resultado[0];
                                     String horaSorteo = resultado[3];
-                                    System.out.println("Granjita Salió el "+numAnimal+" para las "+horaSorteo);
+                                    //System.out.println("Granjita Salió el "+numAnimal+" para las "+horaSorteo);
+                                     JsonObject myResultado = new JsonObject();
+                                     
                                      myResultado.addProperty("animal", numAnimal);
+                                     myResultado.addProperty("programa", "Granjita");
                                     myResultado.addProperty("horaSorteo", horaSorteo);
                                     resultados.add(myResultado);
                                 }
@@ -101,6 +108,9 @@ public class Scraping_allPost {
                 System.out.println("El Status Code no es OK es: "+getStatusConnectionCode(url));
             }
         
+            
+           
+           
         return resultados;
     }
     
