@@ -103,7 +103,7 @@ public class ScrapResultados {
 					
 					
                 }
-		
+		//agregar aqui según la ultima entrada 
             }else{
                 System.out.println("El Status Code no es OK es: "+getStatusConnectionCode(url));
             }
@@ -113,6 +113,26 @@ public class ScrapResultados {
            
         return resultados;
     }
+    
+    public boolean isSameDay(){
+            if (getStatusConnectionCode(url) == 200) {
+				
+                Document document = getHtmlDocument(url);
+                Elements entradas = document.select("time");
+                String fechaPagina ="";
+                for (Element elem : entradas) {
+	            fechaPagina = elem.attr("datetime");break;
+                }
+                String fechaServidor = new ConectarDBCloud().tomarFecha();
+                System.out.println("FechaServidor: "+fechaServidor+" y fechaPagina:"+fechaPagina);
+                return fechaServidor.equalsIgnoreCase(fechaPagina)?true:false;
+		
+            }else{
+               return false;
+            }
+    }
+    
+    
     
     
 	

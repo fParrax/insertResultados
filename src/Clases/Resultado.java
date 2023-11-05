@@ -49,7 +49,11 @@ public class Resultado {
              pst.setString(2,this.programa);
              pst.setString(3,this.animal);
              pst.setString(4,this.sorteo);
-             rsp = pst.executeUpdate();
+           
+            rsp = pst.executeUpdate();             
+            //if(anular(fecha, sorteo)){
+            // }
+            
         } catch (Exception e) {
             Logger.getLogger(Resultado.class.getName()).log(Level.SEVERE, null, e);
             JOptionPane.showMessageDialog(null, "Error con el manejo de base de datos, contacte con el adm.\n" + e);
@@ -60,6 +64,24 @@ public class Resultado {
         return rsp;
     }
     
+    
+    
+    public boolean anular(String fecha, String sorteo){
+         try (java.sql.Connection con = new ConectarDBCloud("ag").getCon()) {
+             sql="update resultados set estado='Anulado' where fechaSorteo=? and sorteo=?";
+             pst = con.prepareStatement(sql);
+             pst.setString(1,fecha);
+             pst.setString(2,sorteo);
+             pst.executeUpdate();
+             return true;
+         }catch (Exception e) {
+            Logger.getLogger(Resultado.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(null, "Error con el manejo de base de datos, contacte con el adm.\n" + e);
+            return false;
+        } finally {
+            cerrar();
+        }
+    }
     public ArrayList getResultados(String fecha01, String fecha02){
         ArrayList<Resultado> resuls = new ArrayList();
         try (java.sql.Connection con = new ConectarDBCloud("ag").getCon()) {

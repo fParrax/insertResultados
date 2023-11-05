@@ -4,9 +4,11 @@
  */
 package Frames;
 
-public class NewClass {
+import Clases.ScrapResultados;
+import Frames.ProcesarResultados;
+
+public class Ejecutar {
     public static void main(String[] args) {
-        Thread t = new MainProceso();
-        t.start();
+        System.out.println( "isSameDay?: "+new ScrapResultados().isSameDay());
     }
 }

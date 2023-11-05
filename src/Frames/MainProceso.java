@@ -22,20 +22,26 @@ import java.util.logging.Logger;
 
 
 public class MainProceso extends Thread{
-    static JsonObject resultadosAgregados = new JsonObject();
-    static int tiempoEspera = 60000;
-    static String fechaHoy = new ConectarDBCloud().tomarFecha();
+     JsonObject resultadosAgregados = new JsonObject();
+     boolean tiempoCorto=true;
+     String fechaHoy = new ConectarDBCloud().tomarFecha();
      ArrayList<Resultado> resultadosCloud = new ArrayList();
-   
+    int minutosDiferencia =0;
     public void run(){
         
         while(true){
-            String fechaServidor = horaActualServidor();
+            
             JsonArray resultados = new ScrapResultados().getResultados();
-            int minutos =0;
+           
+            
             for (JsonElement element : resultados) {
                 JsonObject resultado = element.getAsJsonObject();
-                minutos = minutosPostSorteo(element,fechaHoy,fechaServidor);
+                String fechaServidor = horaActualServidor();
+                minutosDiferencia = minutosPostSorteo(element,fechaHoy,fechaServidor);
+                
+                
+                    
+                System.out.println("");
                 String programa = resultado.get("programa").getAsString();
                 String animal = resultado.get("animal").getAsString();
                 String animalResultado = animal.equals("00")
@@ -45,7 +51,7 @@ public class MainProceso extends Thread{
                
                 System.out.println(programa+" "+animalResultado+" "+sorteoUtilizar);
                 
-                if( !resultadosAgregados.has(sorteoUtilizar)){//minutos>= 0 && minutos <=20 &&
+                if(!resultadosAgregados.has(sorteoUtilizar)){//minutos>= 0 && minutos <=20 && 
                     System.out.println("Resultado no encontrado");
                     
                     resultadosCloud = (ArrayList) new Resultado().getResultados(fechaHoy, fechaHoy).clone();
@@ -63,7 +69,8 @@ public class MainProceso extends Thread{
                         rst.setPrograma(programa);
                         rst.setSorteo(sorteoUtilizar);
                         rst.setAnimal(animalResultado);
-                        if(rst.insert()>0){
+                        //if(rst.insert()>0){
+                        if(true){
                             System.out.println("Agregado en la red");
                             resultadosAgregados.addProperty(sorteoUtilizar, sorteoUtilizar);
                             System.out.println("Agregado Local");
@@ -76,20 +83,40 @@ public class MainProceso extends Thread{
                     System.out.println("Ya se encontraba en el registro Local");
                 }
                 //System.out.println(programa+" "+animalResultado+" "+sorteoUtilizar);
+            
+                
+                
+                
             }
             
-         esperar();
+                
+            if ((minutosDiferencia >= 0 && minutosDiferencia <= 20) || (minutosDiferencia >= 49 && minutosDiferencia <= 59)) {
+                tiempoCorto = true;
+            } else {
+                tiempoCorto = false;
+            }
+                
+          esperar();
         }
     }
     
     private void esperar(){
         try {
-            int minutos = 1;
-            if(resultadosAgregados.size() % 2 != 0 && resultadosAgregados.size()>=3){// esperaremos el restante de una hora
-               // tiempo = (60-minutos);
-                System.out.println("Esperaremos "+minutos+" minuto(s) hasta la próxima revisión");
+            int tiempoEspera = 1;
+            if(tiempoCorto){
+                tiempoEspera = 5;
+            }else{
+                if(minutosDiferencia < 60){
+                   tiempoEspera =  53-minutosDiferencia;
+                }else{
+                    tiempoEspera = 5;
+                }
             }
-            for(int i=0; i<minutos;i++){System.out.println("Esperando #"+i);
+            
+            
+            
+            System.out.println("Esperaremos "+tiempoEspera+" hasta el próximo posible sorteo");
+            for(int i=0; i<tiempoEspera;i++){System.out.println("Esperando #"+i);
                 Thread.sleep(60000);
             }
         } catch (InterruptedException ex) {
@@ -97,7 +124,7 @@ public class MainProceso extends Thread{
         }
     }
     
-    private static String sorteoUtilizar(String programa, String horaSorteo){
+    private  String sorteoUtilizar(String programa, String horaSorteo){
         switch(horaSorteo){
             case "09:00:00": return programa+" 9 AM";
             case "10:00:00": return programa+" 10 AM";
@@ -116,7 +143,7 @@ public class MainProceso extends Thread{
         
     }
     
-    private static int minutosPostSorteo(JsonElement element,String fechaHoy,String fechaServidor) {
+    private  int minutosPostSorteo(JsonElement element,String fechaHoy,String fechaServidor) {
         
 
         JsonObject resultado = element.getAsJsonObject();
@@ -124,10 +151,16 @@ public class MainProceso extends Thread{
         String horaSorteoCompleta = fechaHoy + " " + horaSorteo;
 
         int minutos = getDiferenciaMinutos(horaSorteoCompleta, fechaServidor);
+        System.out.println("hSorteo: "+horaSorteoCompleta+" y fServidor: "+fechaServidor+" - Minutos: "+minutos);
+        //if(incrementar){
+          //  minutos-=60;
+        //}
+        //System.out.println("hSorteoModificado: "+horaSorteoCompleta+" y fServidor: "+fechaServidor+" - Minutos: "+minutos);
+        
         return minutos;
     }
     
-    private static String horaActualServidor(){
+    private  String horaActualServidor(){
         String mFecha ="";
         try {
             String fecha = new ConectarDBCloud().tomarFechaCompleta();
@@ -140,7 +173,7 @@ public class MainProceso extends Thread{
         return mFecha;
     }
     
-    private static String getAnimal(String numero) {
+    private  String getAnimal(String numero) {
         String animal = "";
 
         if (true) {
@@ -264,7 +297,7 @@ public class MainProceso extends Thread{
         return animal;
     }
 
-    private static String getHoradelSorteo(String hora){
+    private  String getHoradelSorteo(String hora){
         String rsp="";
                 rsp = hora.equalsIgnoreCase("01:00") //&& horaArray[2].equalsIgnoreCase("pm")
                     ?  "13:00"
@@ -284,7 +317,7 @@ public class MainProceso extends Thread{
         return rsp+":00";
     }
      
-    private static int getDiferenciaMinutos(String xHora, String horaServidor) {
+    private  int getDiferenciaMinutos(String xHora, String horaServidor) {
 
     LocalDateTime horaInicial = LocalDateTime.parse(xHora, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     LocalDateTime horaFinal = LocalDateTime.parse(horaServidor, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));

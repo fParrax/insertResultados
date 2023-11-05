@@ -7,14 +7,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import javax.sql.DataSource;
 import javax.swing.JOptionPane;
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -23,8 +19,8 @@ import org.apache.commons.dbcp2.BasicDataSource;
 public class ConectarDBCloud {
      static Connection con = null;
                                               
-   // private static  String url = "jdbc:mysql://c1046.gconex.com/";
-     private static  String url = "jdbc:mysql://capsperu.dyndns.org/";
+    private static  String url = "jdbc:mysql://c1046.gconex.com/";
+ //    private static  String url = "jdbc:mysql://capsperu.dyndns.org/";
     String user2 ="sp" ;
     String pass2 ="devSoft23#" ;
      
