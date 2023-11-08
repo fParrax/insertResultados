@@ -177,9 +177,7 @@ public class ProcesarResultados extends javax.swing.JFrame {
                     System.out.println("");
                     String programa = resultado.get("programa").getAsString();
                     String animal = resultado.get("animal").getAsString();
-                    String animalResultado = animal.equals("00")
-                            ? "-1Ballena"
-                            : animal + getAnimal(animal);
+                    String animalResultado = animal + getAnimal(animal);
                     String sorteoUtilizar = sorteoUtilizar(programa, getHoradelSorteo(resultado.get("horaSorteo").getAsString()));
 
                     System.out.println(programa + " " + animalResultado + " " + sorteoUtilizar);
