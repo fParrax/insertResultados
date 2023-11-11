@@ -49,7 +49,7 @@ public class ProcesarResultados extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         txtIngresadosGranjita = new javax.swing.JTextArea();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Ingreso Automático de Resultados");
         setResizable(false);
 
